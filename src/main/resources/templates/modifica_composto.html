@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modifica Composto Chimico</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      margin: 0;
+      padding: 0;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    form {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    button {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    #notification {
+      display: none;
+      text-align: center;
+      font-weight: bold;
+      margin-top: 15px;
+    }
+
+    #notification.success {
+      color: green;
+    }
+
+    #notification.error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Modifica Dettagli Avanzati</h2>
+<form method="put" id="modificaCompostoForm">
+  <input type="text" id="idComposto" name="idComposto" placeholder="ID del Composto da Modificare"><br>
+  <input type="text" id="nome" name="nome" placeholder="Nome"><br>
+  <input type="text" id="formulaChimica" name="formulaChimica" placeholder="Formula Chimica"><br>
+  <input type="number" id="pesoMolecolare" name="pesoMolecolare" placeholder="Peso Molecolare"><br>
+  <input type="number" id="quantitaDisponibile" name="quantitaDisponibile" placeholder="Quantità Disponibile"><br>
+  <button type="button" onclick="modificaComposto()">Modifica</button>
+</form>
+
+
+
+<div id="notification"></div>
+<script>
+  function modificaComposto() {
+    var id = document.getElementById("idComposto").value; // Ottieni l'ID dal campo nascosto
+    var nome = document.getElementById("nome").value;
+    var formulaChimica = document.getElementById("formulaChimica").value;
+    var pesoMolecolare = document.getElementById("pesoMolecolare").value;
+    var quantitaDisponibile = document.getElementById("quantitaDisponibile").value;
+
+    var composto = {
+      id: id,
+      nome: nome,
+      formulaChimica: formulaChimica,
+      pesoMolecolare: pesoMolecolare,
+      quantitaDisponibile: quantitaDisponibile
+    };
+
+    fetch("/api/modificaComposto/" + id, {
+      method: "PUT",
+      body: JSON.stringify(composto),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+    .then(function (response) {
+      if (response.ok) {
+        document.getElementById("notification").innerHTML = "Aggiornamento riuscito.";
+        document.getElementById("notification").className = "success";
+      } else {
+        document.getElementById("notification").innerHTML = "Errore durante l'aggiornamento.";
+        document.getElementById("notification").className = "error";
+      }
+      document.getElementById("notification").style.display = "block";
+
+      // Nascondi la notifica dopo 3 secondi
+      setTimeout(function () {
+        document.getElementById("notification").style.display = "none";
+      }, 3000);
+    })
+    .catch(function (error) {
+      console.error("Errore:", error);
+    });
+  }
+</script>
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registration</title>
+  <style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        text-align: center;
+    }
+
+    .container {
+        max-width: 400px;
+        margin: 0 auto;
+        margin-top: 2%;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+        color: #333;
+    }
+
+    form {
+        text-align: center;
+    }
+
+    input[type="email"],
+    input[type="password"] {
+        width: 60%;
+        padding: 10px;
+        margin: 5px auto; /* Centro gli input orizzontalmente */
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    input[type="submit"] {
+        background-color: #007BFF;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        padding: 10px 20px;
+        cursor: pointer;
+        display: block;
+        margin: 20px auto 0; /* Centro il pulsante orizzontalmente */
+    }
+
+    input[type="submit"]:hover {
+        background-color: #0056b3;
+    }
+
+    .error-message {
+        color: #ff0000;
+        margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Registration</h1>
+  <div th:if="${param.error}" class="error-message">
+    Error during registration.
+  </div>
+  <form th:action="@{/registration}" method="post">
+    <div>
+      <input type="email" name="email" placeholder="Email" />
+    </div>
+    <div>
+      <input type="password" name="password" placeholder="Password" />
+    </div>
+    <input type="submit" value="Register" />
+  </form>
+</div>
+</body>
+</html>

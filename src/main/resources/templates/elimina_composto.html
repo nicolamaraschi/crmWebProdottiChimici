@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elimina Composto Chimico</title>
+    <style>
+   body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+
+    h1 {
+      text-align: center;
+      padding: 20px;
+      background-color: #007bff;
+      color: #fff;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    input[type="text"] {
+      width: 60%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button {
+      background-color: #f44336;
+      color: white;
+      border: none;
+      cursor: pointer;
+      width: 40%;
+      padding: 10px;
+      border-radius: 4px;
+    }
+
+    button:hover {
+      background-color: #d32f2f;
+    }
+
+    #notification {
+      display: none;
+      text-align: center;
+      font-weight: bold;
+      margin-top: 15px;
+    }
+
+    #notification.success {
+      color: green;
+    }
+
+    #notification.error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+<h2>Elimina Composto Chimico</h2>
+    <input type="text" id="compostoId" placeholder="Inserisci l'ID del composto" style="text-align: center;">
+    <button id="eliminaButton">Elimina</button>
+</form>
+<div id="notification"></div>
+<script>
+  document.getElementById("eliminaButton").addEventListener("click", eliminaComposto);
+
+  function eliminaComposto() {
+    var compostoId = document.getElementById("compostoId").value;
+
+    fetch("/api/eliminaComposto/" + compostoId, {
+      method: "DELETE"
+    })
+    .then(function (response) {
+      if (response.ok) {
+        document.getElementById("notification").textContent = "Eliminazione riuscita.";
+        document.getElementById("notification").style.color = "green";
+      } else {
+        document.getElementById("notification").textContent = "Errore durante l'eliminazione.";
+        document.getElementById("notification").style.color = "red";
+      }
+      document.getElementById("notification").style.display = "block";
+
+      // Nascondi la notifica dopo 3 secondi
+      setTimeout(function () {
+        document.getElementById("notification").style.display = "none";
+      }, 3000);
+    })
+    .catch(function (error) {
+      console.error("Errore:", error);
+    });
+  }
+</script>
+</body>
+</html>

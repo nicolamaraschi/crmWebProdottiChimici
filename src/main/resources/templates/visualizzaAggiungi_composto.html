@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestione Composti Chimici</title>
+    <style>
+        /* Stile generale della pagina */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        h1 {
+            text-align: center;
+            background-color: #333;
+            color: white;
+            padding: 10px 0;
+            margin-bottom: 20px;
+        }
+
+        /* Stile per la tabella dei composti */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background-color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #333;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        /* Stile per il form di aggiunta composto */
+        #aggiungiCompostoForm {
+            text-align: center;
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        #aggiungiCompostoForm input[type="text"],
+        #aggiungiCompostoForm input[type="number"] {
+            width: 30%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        #aggiungiCompostoForm button {
+            background-color: #333;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* Stile per la notifica */
+        #notification {
+            text-align: center;
+            font-weight: bold;
+            margin-top: 15px;
+            display: none;
+        }
+
+        #notification.success {
+            color: green;
+        }
+
+        #notification.error {
+            color: red;
+        }
+
+        /* Stile per il pulsante "Visualizza Grafici" */
+        button#visualizzaGrafici {
+            background-color: #333;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<h1>Gestione Composti Chimici</h1>
+
+<!-- Aggiungi un div per la notifica di successo o errore -->
+
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Nome</th>
+        <th>Formula Chimica</th>
+        <th>Peso Molecolare</th>
+        <th>Quantità Disponibile</th>
+    </tr>
+    <!-- Utilizza JavaScript per riempire la tabella -->
+    <tbody id="compostiTableBody"></tbody>
+    </tr>
+</table>
+
+<h2>Aggiungi Composto</h2>
+<div id="notification"></div>
+<!-- Quando questo modulo viene inviato, viene invocata la funzione "aggiungiComposto" nel controller. -->
+<form th:action="@{/api/inserisci}" method="post" id="aggiungiCompostoForm">
+    <input type="text" id="nome" name="nome" placeholder="Nome"><br>
+    <input type="text" id="formulaChimica" name="formulaChimica" placeholder="Formula Chimica"><br>
+    <input type="number" id="pesoMolecolare" name="pesoMolecolare" placeholder="Peso Molecolare"><br>
+    <input type="number" id="quantitaDisponibile" name="quantitaDisponibile" placeholder="Quantità Disponibile"><br>
+    <button type="submit">Aggiungi</button>
+</form>
+
+
+<!-- LISTA -->
+<script>
+    // Funzione per ottenere la lista dei composti e popolare la tabella
+function getComposti() {
+    fetch("/api/listaComposti")
+    .then(function(response) {
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new Error("Errore durante il recupero dei composti chimici.");
+        }
+    })
+    .then(function(data) {
+        // Seleziona la tbody della tabella
+        var tableBody = document.getElementById("compostiTableBody");
+
+        // Pulisci il contenuto esistente della tabella
+        tableBody.innerHTML = "";
+
+        // Popola la tabella con i dati dei composti
+        data.forEach(function(composto) {
+            var row = document.createElement("tr");
+            var idCell = document.createElement("td");
+            var nomeCell = document.createElement("td");
+            var formulaChimicaCell = document.createElement("td");
+            var pesoMolecolareCell = document.createElement("td");
+            var quantitaDisponibileCell = document.createElement("td");
+
+            idCell.textContent = composto.id;
+            nomeCell.textContent = composto.nome;
+            formulaChimicaCell.textContent = composto.formulaChimica;
+            pesoMolecolareCell.textContent = composto.pesoMolecolare;
+            quantitaDisponibileCell.textContent = composto.quantitaDisponibile;
+
+            row.appendChild(idCell);
+            row.appendChild(nomeCell);
+            row.appendChild(formulaChimicaCell);
+            row.appendChild(pesoMolecolareCell);
+            row.appendChild(quantitaDisponibileCell);
+
+            tableBody.appendChild(row);
+        });
+    })
+    .catch(function(error) {
+        console.error("Errore:", error);
+    });
+}
+
+// Chiamare la funzione per ottenere la lista dei composti al caricamento della pagina
+window.addEventListener("load", getComposti);
+
+</script>
+
+<!-- INSERIMENTO -->
+<script>
+    document.getElementById("aggiungiCompostoForm").addEventListener("submit", function (event) {
+        event.preventDefault(); // Previeni il comportamento predefinito del modulo
+
+        // Dati del composto da inviare
+        var composto = {
+            nome: document.getElementById("nome").value,
+            formulaChimica: document.getElementById("formulaChimica").value,
+            pesoMolecolare: parseFloat(document.getElementById("pesoMolecolare").value),
+            quantitaDisponibile: parseFloat(document.getElementById("quantitaDisponibile").value)
+        };
+
+        // Esegui una richiesta AJAX per aggiungere il composto
+        fetch("/api/inserisci", {
+            method: "POST",
+            body: JSON.stringify(composto), // Converte l'oggetto in una stringa JSON
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        .then(function (response) {
+            if (response.ok) {
+                // Se l'inserimento è riuscito, mostra una notifica di successo
+                document.getElementById("notification").innerHTML = "Inserimento riuscito.";
+                document.getElementById("notification").classList.remove("error");
+                document.getElementById("notification").classList.add("success");
+            } else {
+                // Se l'inserimento è fallito, mostra una notifica di errore
+                document.getElementById("notification").innerHTML = "Errore durante l'inserimento.";
+                document.getElementById("notification").classList.remove("success");
+                document.getElementById("notification").classList.add("error");
+            }
+            document.getElementById("notification").style.display = "block"; // Mostra la notifica
+
+            // Nascondi la notifica dopo 3 secondi
+            setTimeout(function () {
+                document.getElementById("notification").style.display = "none";
+            }, 3000);
+        })
+        .catch(function (error) {
+            console.error("Errore:", error);
+        });
+    });
+</script>
+</body>
+</html>

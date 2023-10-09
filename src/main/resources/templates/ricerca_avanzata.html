@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Ricerca Avanzata</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      text-align: center;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    .container {
+      max-width: 400px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    input[type="text"],
+    input[type="checkbox"],
+    select {
+      width: 60%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    select {
+      margin-top: 10px;
+    }
+
+    input[type="submit"] {
+      background-color: #007BFF;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 10px 20px;
+      cursor: pointer;
+      display: block;
+      margin: 20px auto 10px;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #0056b3;
+    }
+
+    #notification {
+      display: none;
+      text-align: center;
+      font-weight: bold;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+<h1>Ricerca Avanzata</h1>
+<div class="container">
+  <form action="/effettua-ricerca" method="post">
+    <label for="nomeCheckbox">Nome:</label>
+    <input type="checkbox" id="nomeCheckbox" name="nomeCheckbox">
+    <input type="text" id="nomeField" name="nomeField">
+
+    <label for="formulaCheckbox">Formula Chimica:</label>
+    <input type="checkbox" id="formulaCheckbox" name="formulaCheckbox">
+    <input type="text" id="formulaField" name="formulaField">
+
+    <label for="pesoMolecolareCheckbox">Peso Molecolare:</label>
+    <input type="checkbox" id="pesoMolecolareCheckbox" name="pesoMolecolareCheckbox">
+    <input type="text" id="pesoMolecolareField" name="pesoMolecolareField">
+
+    <label for="quantitaDisponibileCheckbox">Quantita Disponibile:</label>
+    <input type="checkbox" id="quantitaDisponibileCheckbox" name="quantitaDisponibileCheckbox">
+    <input type="text" id="quantitaDisponibileField" name="quantitaDisponibileField">
+
+    <label for="operatoriLogiciCombo">Operatori Logici:</label>
+    <select id="operatoriLogiciCombo" name="operatoriLogiciCombo">
+      <option value="AND">AND</option>
+      <option value="OR">OR</option>
+    </select>
+
+    <input type="submit" value="Cerca">
+  </form>
+
+  <div id="notification"></div>
+</div>
+
+<script>
+  var form = document.querySelector("form");
+
+  form.addEventListener("submit", function (event) {
+    event.preventDefault();
+    var formData = new FormData(this);
+
+    fetch("/ricerca-avanzata", {
+      method: "POST",
+      body: formData,
+    })
+    .then(function (response) {
+      if (response.ok) {
+        document.getElementById("notification").innerHTML = "Ricerca riuscita.";
+        document.getElementById("notification").style.color = "green";
+      } else {
+        document.getElementById("notification").innerHTML = "Nessun risultato trovato.";
+        document.getElementById("notification").style.color = "red";
+      }
+      document.getElementById("notification").style.display = "block";
+
+      // Nascondi la notifica dopo 3 secondi
+      setTimeout(function () {
+        document.getElementById("notification").style.display = "none";
+      }, 3000);
+    })
+    .catch(function (error) {
+      console.error("Errore:", error);
+    });
+  });
+</script>
+</body>
+</html>

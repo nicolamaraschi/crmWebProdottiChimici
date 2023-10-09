@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cerca Composti Chimici per Nome</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      margin: 0;
+      padding: 0;
+      text-align:center;
+    }
+
+    h1 {
+      text-align: center;
+      padding: 20px;
+      background-color: #007bff;
+      color: #fff;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    #searchField {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    #searchButton {
+      width:40%;
+      padding: 10px;
+      font-size: 16px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      margin-top:2%;
+    }
+
+    #compostiTable {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    #compostiTable th, #compostiTable td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    #compostiTable th {
+      background-color: #007bff;
+      color: #fff;
+    }
+
+    #notification {
+      text-align: center;
+      font-weight: bold;
+      margin-top: 15px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+<h1>Cerca Composti Chimici per Nome</h1>
+
+<div class="container">
+  <input type="text" id="searchField" placeholder="Inserisci il nome del composto" style="text-align: center;">
+  <button id="searchButton" onclick="cercaCompostiChimici()">Cerca</button>
+
+  <table id="compostiTable">
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Nome</th>
+      <th>Formula Chimica</th>
+      <th>Peso Molecolare</th>
+      <th>Quantità Disponibile</th>
+    </tr>
+    </thead>
+    <tbody id="compostiTableBody">
+    <!-- I risultati della ricerca verranno visualizzati qui -->
+    </tbody>
+  </table>
+
+  <div id="notification"></div>
+</div>
+
+<script>
+    function cercaCompostiChimici() {
+        var nome = document.getElementById("searchField").value;
+
+        fetch("/cercaPerNome?nome=" + nome)
+            .then(function (response) {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error("Errore nella richiesta.");
+                }
+            })
+            .then(function (data) {
+                // Costruisci la tabella con i risultati
+                var tableBody = document.getElementById("compostiTableBody");
+                tableBody.innerHTML = ""; // Pulisci la tabella
+
+                data.forEach(function (composto) {
+                    var row = document.createElement("tr");
+                    var idCell = document.createElement("td");
+                    idCell.textContent = composto.id;
+                    var nomeCell = document.createElement("td");
+                    nomeCell.textContent = composto.nome;
+                    var formulaChimicaCell = document.createElement("td");
+                    formulaChimicaCell.textContent = composto.formulaChimica;
+                    var pesoMolecolareCell = document.createElement("td");
+                    pesoMolecolareCell.textContent = composto.pesoMolecolare;
+                    var quantitaDisponibileCell = document.createElement("td");
+                    quantitaDisponibileCell.textContent = composto.quantitaDisponibile;
+
+                    row.appendChild(idCell);
+                    row.appendChild(nomeCell);
+                    row.appendChild(formulaChimicaCell);
+                    row.appendChild(pesoMolecolareCell);
+                    row.appendChild(quantitaDisponibileCell);
+
+                    tableBody.appendChild(row);
+                });
+
+                // Visualizza una notifica
+                var notification = document.getElementById("notification");
+                notification.textContent = "Ricerca riuscita. Trovati " + data.length + " risultati.";
+                notification.style.color = "green";
+                notification.style.display = "block";
+
+                // Nascondi la notifica dopo 3 secondi
+                setTimeout(function () {
+                    notification.style.display = "none";
+                }, 3000);
+            })
+            .catch(function (error) {
+                console.error("Errore:", error);
+
+                // Visualizza una notifica di errore
+                var notification = document.getElementById("notification");
+                notification.textContent = "Errore durante la ricerca.";
+                notification.style.color = "red";
+                notification.style.display = "block";
+
+                // Nascondi la notifica di errore dopo 3 secondi
+                setTimeout(function () {
+                    notification.style.display = "none";
+                }, 3000);
+            });
+    }
+</script>
+
+</body>
+</html>

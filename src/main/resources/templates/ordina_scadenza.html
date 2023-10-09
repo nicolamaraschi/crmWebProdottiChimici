@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ordina Composti per Data di Scadenza</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    button {
+      background-color: #007BFF;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 10px 20px;
+      cursor: pointer;
+      margin-bottom: 20px;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 80%;
+      max-width: 800px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      margin-top: 20px;
+    }
+
+    th, td {
+      padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    #notification {
+      display: none;
+      text-align: center;
+      font-weight: bold;
+      margin-top: 15px;
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px;
+      border-radius: 4px;
+      width: 60%;
+      max-width: 400px;
+    }
+
+    #notification.error {
+      background-color: #f44336;
+    }
+  </style>
+</head>
+<body>
+<h1>Ordina Composti per Data di Scadenza</h1>
+
+<button onclick="ordinaCompostiPerDataScadenza()">Ordina per Data di Scadenza</button>
+
+<table>
+  <tr>
+    <th>ID</th>
+    <th>Nome</th>
+    <th>Formula Chimica</th>
+    <th>Peso Molecolare</th>
+    <th>Quantità Disponibile</th>
+    <th>Data di Scadenza</th>
+  </tr>
+  <!-- Utilizza Thymeleaf per associare i dati alla tabella -->
+  <tbody id="compostiTableBody">
+  <!-- I risultati dell'ordinamento verranno visualizzati qui -->
+  </tbody>
+</table>
+
+<div id="notification"></div>
+
+<script>
+  function ordinaCompostiPerDataScadenza() {
+    fetch("/api/ordinaperdata")
+    .then(function (response) {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error("Errore nella richiesta.");
+      }
+    })
+    .then(function (data) {
+      // Costruisci la tabella con i risultati dell'ordinamento
+      var tableBody = document.getElementById("compostiTableBody");
+      tableBody.innerHTML = ""; // Pulisci la tabella
+
+      data.forEach(function (composto) {
+        var row = document.createElement("tr");
+        var idCell = document.createElement("td");
+        idCell.textContent = composto.id;
+        var nomeCell = document.createElement("td");
+        nomeCell.textContent = composto.nome;
+        var formulaChimicaCell = document.createElement("td");
+        formulaChimicaCell.textContent = composto.formulaChimica;
+        var pesoMolecolareCell = document.createElement("td");
+        pesoMolecolareCell.textContent = composto.pesoMolecolare;
+        var quantitaDisponibileCell = document.createElement("td");
+        quantitaDisponibileCell.textContent = composto.quantitaDisponibile;
+        var dataScadenzaCell = document.createElement("td");
+        dataScadenzaCell.textContent = composto.dataScadenza;
+
+        row.appendChild(idCell);
+        row.appendChild(nomeCell);
+        row.appendChild(formulaChimicaCell);
+        row.appendChild(pesoMolecolareCell);
+        row.appendChild(quantitaDisponibileCell);
+        row.appendChild(dataScadenzaCell);
+
+        tableBody.appendChild(row);
+      });
+
+      // Visualizza una notifica
+      var notification = document.getElementById("notification");
+      notification.textContent = "Ordinamento riuscito.";
+      notification.style.backgroundColor = "#4CAF50";
+      notification.style.display = "block";
+
+      // Nascondi la notifica dopo 3 secondi
+      setTimeout(function () {
+        notification.style.display = "none";
+      }, 3000);
+    })
+    .catch(function (error) {
+      console.error("Errore:", error);
+
+      // Visualizza una notifica di errore
+      var notification = document.getElementById("notification");
+      notification.textContent = "Errore durante l'ordinamento.";
+      notification.style.backgroundColor = "#f44336";
+      notification.style.display = "block";
+
+      // Nascondi la notifica di errore dopo 3 secondi
+      setTimeout(function () {
+        notification.style.display = "none";
+      }, 3000);
+    });
+  }
+</script>
+</body>
+</html>
