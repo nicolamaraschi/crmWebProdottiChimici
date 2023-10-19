@@ -16,26 +16,32 @@ public interface CompostoChimicoRepository extends JpaRepository<CompostoChimico
 
     @Modifying
     @Transactional
-    @Query(value = "SELECT * FROM composti_chimici WHERE nome = :nome", nativeQuery = true)
-    List<CompostoChimico> findByNomeContaining(String nome);
-    @Modifying
-    @Transactional
-    @Query(value = "SELECT * FROM composti_chimici WHERE formula_chimica LIKE '%formulaChimica%'", nativeQuery = true)
-    Collection<? extends CompostoChimico> findByFormulaChimicaContaining(String formulaChimica);
+    @Query(value = "SELECT * FROM composti_chimici WHERE nome LIKE %:nome%", nativeQuery = true)
+    List<CompostoChimico> findByNomeContaining(@Param("nome") String nome);
 
     @Modifying
     @Transactional
-    @Query(value = "SELECT * FROM composti_chimici WHERE peso_molecolare = pesoMolecolare", nativeQuery = true)
-    Collection<? extends CompostoChimico> findByPesoMolecolare(Double pesoMolecolare);
+    @Query(value = "SELECT * FROM composti_chimici WHERE formula_chimica LIKE %:formulaChimica%", nativeQuery = true)
+    Collection<? extends CompostoChimico> findByFormulaChimicaContaining(@Param("formulaChimica") String formulaChimica);
 
     @Modifying
     @Transactional
-    @Query(value = "SELECT * FROM composti_chimici WHERE quantita_disponibile = quantitaDisponibile", nativeQuery = true)
-    Collection<? extends CompostoChimico> findByQuantitaDisponibile(Double quantitaDisponibile);
+    @Query(value = "SELECT * FROM composti_chimici WHERE peso_molecolare LIKE :pesoMolecolare", nativeQuery = true)
+    Collection<? extends CompostoChimico> findByPesoMolecolare(@Param("pesoMolecolare") Double pesoMolecolare);
+
     @Modifying
     @Transactional
-    @Query(value = "SELECT * FROM composti_chimici WHERE nome LIKE '%nome%' AND formula_chimica LIKE '%formulaChimica%' AND peso_molecolare = pesoMolecolare AND quantita_disponibile = quantitaDisponibile", nativeQuery = true)
-    List<CompostoChimico> findByNomeContainingAndFormulaChimicaContainingAndPesoMolecolareAndQuantitaDisponibile(String nome, String formulaChimica, Double pesoMolecolare, Double quantitaDisponibile);
+    @Query(value = "SELECT * FROM composti_chimici WHERE quantita_disponibile LIKE :quantitaDisponibile", nativeQuery = true)
+    Collection<? extends CompostoChimico> findByQuantitaDisponibile(@Param("quantitaDisponibile") Double quantitaDisponibile);
+
+    @Modifying
+    @Transactional
+    @Query(value = "SELECT * FROM composti_chimici WHERE nome LIKE %:nome% AND formula_chimica LIKE %:formulaChimica% AND peso_molecolare = :pesoMolecolare AND quantita_disponibile = :quantitaDisponibile", nativeQuery = true)
+    List<CompostoChimico> findByNomeContainingAndFormulaChimicaContainingAndPesoMolecolareAndQuantitaDisponibile(
+            @Param("nome") String nome,
+            @Param("formulaChimica") String formulaChimica,
+            @Param("pesoMolecolare") Double pesoMolecolare,
+            @Param("quantitaDisponibile") Double quantitaDisponibile);
 
     @Modifying
     @Transactional

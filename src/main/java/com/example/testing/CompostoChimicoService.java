@@ -21,8 +21,7 @@ public class CompostoChimicoService {
         // Esegui la ricerca in base ai parametri forniti
         if (operatoreLogico.equals("AND")) {
             // Ricerca con operatore logico AND (tutti i parametri devono essere soddisfatti)
-            risultatiRicerca = compostoChimicoRepository.findByNomeContainingAndFormulaChimicaContainingAndPesoMolecolareAndQuantitaDisponibile(
-                    nome, formulaChimica, pesoMolecolare, quantitaDisponibile);
+            risultatiRicerca = compostoChimicoRepository.findByNomeContainingAndFormulaChimicaContainingAndPesoMolecolareAndQuantitaDisponibile(nome, formulaChimica, pesoMolecolare, quantitaDisponibile);
         } else if (operatoreLogico.equals("OR")) {
             // Ricerca con operatore logico OR (almeno uno dei parametri deve essere soddisfatto)
             if (nome != null) {
@@ -40,7 +39,7 @@ public class CompostoChimicoService {
         }
 
         // Rimuovi duplicati dai risultati
-        risultatiRicerca = risultatiRicerca.stream().distinct().collect(Collectors.toList());
+        //risultatiRicerca = risultatiRicerca.stream().distinct().collect(Collectors.toList());
 
         return risultatiRicerca;
     }

@@ -102,18 +102,7 @@
 <!-- Aggiungi un div per la notifica di successo o errore -->
 
 
-<table>
-    <tr>
-        <th>ID</th>
-        <th>Nome</th>
-        <th>Formula Chimica</th>
-        <th>Peso Molecolare</th>
-        <th>Quantità Disponibile</th>
-    </tr>
-    <!-- Utilizza JavaScript per riempire la tabella -->
-    <tbody id="compostiTableBody"></tbody>
-    </tr>
-</table>
+
 
 <h2>Aggiungi Composto</h2>
 <div id="notification"></div>
@@ -126,59 +115,6 @@
     <button type="submit">Aggiungi</button>
 </form>
 
-
-<!-- LISTA -->
-<script>
-    // Funzione per ottenere la lista dei composti e popolare la tabella
-function getComposti() {
-    fetch("/api/listaComposti")
-    .then(function(response) {
-        if (response.ok) {
-            return response.json();
-        } else {
-            throw new Error("Errore durante il recupero dei composti chimici.");
-        }
-    })
-    .then(function(data) {
-        // Seleziona la tbody della tabella
-        var tableBody = document.getElementById("compostiTableBody");
-
-        // Pulisci il contenuto esistente della tabella
-        tableBody.innerHTML = "";
-
-        // Popola la tabella con i dati dei composti
-        data.forEach(function(composto) {
-            var row = document.createElement("tr");
-            var idCell = document.createElement("td");
-            var nomeCell = document.createElement("td");
-            var formulaChimicaCell = document.createElement("td");
-            var pesoMolecolareCell = document.createElement("td");
-            var quantitaDisponibileCell = document.createElement("td");
-
-            idCell.textContent = composto.id;
-            nomeCell.textContent = composto.nome;
-            formulaChimicaCell.textContent = composto.formulaChimica;
-            pesoMolecolareCell.textContent = composto.pesoMolecolare;
-            quantitaDisponibileCell.textContent = composto.quantitaDisponibile;
-
-            row.appendChild(idCell);
-            row.appendChild(nomeCell);
-            row.appendChild(formulaChimicaCell);
-            row.appendChild(pesoMolecolareCell);
-            row.appendChild(quantitaDisponibileCell);
-
-            tableBody.appendChild(row);
-        });
-    })
-    .catch(function(error) {
-        console.error("Errore:", error);
-    });
-}
-
-// Chiamare la funzione per ottenere la lista dei composti al caricamento della pagina
-window.addEventListener("load", getComposti);
-
-</script>
 
 <!-- INSERIMENTO -->
 <script>

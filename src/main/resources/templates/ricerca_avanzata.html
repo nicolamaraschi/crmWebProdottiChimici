@@ -98,35 +98,85 @@
 </div>
 
 <script>
-  var form = document.querySelector("form");
+    var form = document.querySelector("form");
 
-  form.addEventListener("submit", function (event) {
-    event.preventDefault();
-    var formData = new FormData(this);
+    form.addEventListener("submit", function (event) {
+        event.preventDefault();
+        var formData = new FormData(this);
 
-    fetch("/ricerca-avanzata", {
-      method: "POST",
-      body: formData,
-    })
-    .then(function (response) {
-      if (response.ok) {
-        document.getElementById("notification").innerHTML = "Ricerca riuscita.";
-        document.getElementById("notification").style.color = "green";
-      } else {
-        document.getElementById("notification").innerHTML = "Nessun risultato trovato.";
-        document.getElementById("notification").style.color = "red";
-      }
-      document.getElementById("notification").style.display = "block";
+        // Costruisci l'URL della richiesta GET con i parametri dalla form
+        var url = "/ricerca-avanzata?";
+        for (var pair of formData.entries()) {
+            url += pair[0] + "=" + pair[1] + "&";
+        }
+        // Rimuovi l'ultimo carattere "&" dall'URL
+        url = url.slice(0, -1);
 
-      // Nascondi la notifica dopo 3 secondi
-      setTimeout(function () {
-        document.getElementById("notification").style.display = "none";
-      }, 3000);
-    })
-    .catch(function (error) {
-      console.error("Errore:", error);
+        fetch(url, {
+            method: "GET",
+        })
+            .then(function (response) {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error("Nessun risultato trovato.");
+                }
+            })
+            .then(function (data) {
+                // Costruisci la tabella con i risultati
+                var tableBody = document.getElementById("compostiTableBody");
+                tableBody.innerHTML = ""; // Pulisci la tabella
+
+                data.forEach(function (composto) {
+                    var row = document.createElement("tr");
+                    var idCell = document.createElement("td");
+                    idCell.textContent = composto.id;
+                    var nomeCell = document.createElement("td");
+                    nomeCell.textContent = composto.nome;
+                    var formulaChimicaCell = document.createElement("td");
+                    formulaChimicaCell.textContent = composto.formulaChimica;
+                    var pesoMolecolareCell = document.createElement("td");
+                    pesoMolecolareCell.textContent = composto.pesoMolecolare;
+                    var quantitaDisponibileCell = document.createElement("td");
+                    quantitaDisponibileCell.textContent = composto.quantitaDisponibile;
+
+                    row.appendChild(idCell);
+                    row.appendChild(nomeCell);
+                    row.appendChild(formulaChimicaCell);
+                    row.appendChild(pesoMolecolareCell);
+                    row.appendChild(quantitaDisponibileCell);
+
+                    tableBody.appendChild(row);
+                });
+
+                // Visualizza una notifica
+                var notification = document.getElementById("notification");
+                notification.textContent = "Ricerca riuscita. Trovati " + data.length + " risultati.";
+                notification.style.color = "green";
+                notification.style.display = "block";
+
+                // Nascondi la notifica dopo 3 secondi
+                setTimeout(function () {
+                    notification.style.display = "none";
+                }, 3000);
+            })
+            .catch(function (error) {
+                console.error("Errore:", error);
+
+                // Visualizza una notifica di errore
+                var notification = document.getElementById("notification");
+                notification.textContent = "Errore durante la ricerca.";
+                notification.style.color = "red";
+                notification.style.display = "block";
+
+                // Nascondi la notifica di errore dopo 3 secondi
+                setTimeout(function () {
+                    notification.style.display = "none";
+                }, 3000);
+            });
     });
-  });
 </script>
+
+
 </body>
 </html>

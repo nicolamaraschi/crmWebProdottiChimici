@@ -33,8 +33,8 @@ public class CompostoChimicoController {
         return compostoChimicoRepository.findById(id);
     }
  */
-@PostMapping("/api/inserisci")
-public ResponseEntity<?> createComposto(@RequestBody CompostoChimico compostoChimico) {
+    @PostMapping("/api/inserisci")
+    public ResponseEntity<?> createComposto(@RequestBody CompostoChimico compostoChimico) {
     try {
         int result = compostoChimicoRepository.insertComposto(
                 compostoChimico.getNome(),
@@ -55,6 +55,7 @@ public ResponseEntity<?> createComposto(@RequestBody CompostoChimico compostoChi
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Inserimento fallito.");
     }
 }
+
     @GetMapping("/api/listaComposti")
     public ResponseEntity<List<CompostoChimico>> getComposti() {
         List<CompostoChimico> composti = compostoChimicoRepository.trovaTutti(); // Sostituisci con il metodo corretto per ottenere i composti
@@ -116,15 +117,9 @@ public ResponseEntity<?> createComposto(@RequestBody CompostoChimico compostoChi
     @Autowired
     private CompostoChimicoService compostoChimicoService;
 
-    @PostMapping("/ricerca-avanzata")
-    public ResponseEntity<String> effettuaRicercaAvanzata(@RequestParam(required = false) String nomeField,
-                                                          @RequestParam(required = false) String formulaField,
-                                                          @RequestParam(required = false) Double pesoMolecolareField,
-                                                          @RequestParam(required = false) Double quantitaDisponibileField,
-                                                          @RequestParam String operatoriLogiciCombo) {
-        // Implementa la logica per la ricerca avanzata in base ai parametri ricevuti
-
-        // Esempio di logica di ricerca
+    @GetMapping("/ricerca-avanzata")
+    public ResponseEntity<String> effettuaRicercaAvanzata(@RequestParam(required = false) String nomeField, @RequestParam(required = false) String formulaField, @RequestParam(required = false) Double pesoMolecolareField, @RequestParam(required = false) Double quantitaDisponibileField, @RequestParam String operatoriLogiciCombo)
+    {
         List<CompostoChimico> risultatiRicerca = compostoChimicoService.cercaCompostiAvanzata(nomeField, formulaField, pesoMolecolareField, quantitaDisponibileField, operatoriLogiciCombo);
 
         if (!risultatiRicerca.isEmpty()) {
@@ -135,6 +130,7 @@ public ResponseEntity<?> createComposto(@RequestBody CompostoChimico compostoChi
             return ResponseEntity.notFound().build();
         }
     }
+
 
     // Ordina i composti chimici per data di scadenza
     @GetMapping("/api/ordinaperdata")

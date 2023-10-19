@@ -47,6 +47,10 @@ public class MainController implements ErrorController {
     public String eliminaComposto() {
         return "elimina_composto"; // Restituisce il nome della vista (senza estensione .html)
     }
+    @GetMapping("/listaComposti")
+    public String listaComposti() {
+        return "listaComposti"; // Restituisce il nome della vista (senza estensione .html)
+    }
 
 
 }
